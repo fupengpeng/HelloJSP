@@ -1,0 +1,230 @@
+
+深入jsp技术
+    1.jsp简介
+        01.jsp：java server pager，是为了简化servlet的工作而出现的替代品。包含很多技术：JavaBean、自定义标签、EL表达式、JSTL表达式等。
+        02.jsp工作原理：jsp是一种servlet。。。 。。。
+        03.jsp的生命周期：jsp是servlet，运行时只会有一个实例。和servlet一样。
+    2.jsp语法
+        01.jsp的组成：html代码和java代码的混合体。
+            (1)模板数据：jsp中的html代码，它的内容是固定的，不会控制流程，不会影响程序运行结果。
+            (2)元素：jsp中的java代码，决定着程序的流程。包括脚本（Scriptlet，java代码）、jsp指令、jsp标签。
+        02.jsp脚本：必须使用 <% 和  %> 括起来，中间的代码必须遵循java语法。可以出现在jsp的任何地方。
+            example：<%  int a = 10; int b = 20;  int c = a + b;  %>
+        03.jsp输出：必须使用 <%= 和 %> 括起来，可以输出各种类型（int double boolean String Object）数据，类似于servlet的输出。
+            example：<body>  int型数字a=<%= 15 %> </body>
+        04.jsp注释：<%-- 注释内容，可以添加多行 --%>
+        05.jsp全局变量（方法与成员变量）：必须使用 <%! 和 %> 括起来，可以声明多个方法和成员变量，也可以分开声明。
+        06.jsp中的if语句：使用元素（脚本）表示，可添加模板数据，但必须符合各自的使用规则及相关语法。
+        07.jsp中的for循环：同if语句
+        08.jsp中的while循环：同if语句
+        09.jsp中的return语句：在元素中使用return语句后，程序直接结束运行（包括java代码和html代码）。
+        10.jsp中的break语句：在元素中使用break语句后，则跳出当前程序代码块，如for循环、while循环、switch循环等子句。该程序代码块外层的代码依然会继续运行。
+    3.jsp指令：用来声明jsp页面的一些属性，以 <%@ 开始 %> 结束。常见指令有：page、taglib、include。
+        01.page指令：用来声明jsp页面的属性。page指令可以存在多个，但里面的属性处理import之外，都只能出现一次，否则会出现编译错误。page指令有如下属性（属性名区分大小写）：
+            (01)language：指明解释该jsp文件时采用的语言。一般为java语言
+            (02)extends：指明编译该jsp文件时继承那个类，一般为Servlet，当需要继承普通类时，需要实现Servlet的init、destory等方法
+            (03)import：引入该jsp中用到的类、包。可声明多次。
+            (04)session：指明该jsp是否内置Session对象，如果为true，则内置，否则为不内置。默认true。
+            (05)autoFlush：是否运行缓存。如果为true，则使用ipu.println（）方法输出的字符串并不是立刻到达客户端服务器，而是暂存在缓存里，缓存满了或者程序执行完毕或者执行out。flush（）操作时才到客户端。默认为true
+            (06)buffer：指定缓存大小，当autoFlush设置为true时有效。单位kb
+            (07)isThreadSafe：指定线程是否安全，如果为true，则运行多个线程同时运行该jsp程序，否则只运行一个线程运行，其余线程等待。默认为false
+            (08)isErrorPage：指定该页面是否为错误处理页面，如果为true，则该jsp内置有一个Exception对象exception，可直接使用。默认为false
+            (09)errorPage：指明一个错误显示页面，如果该jsp抛出一个未捕捉的异常，则转到errorPage指定的页面，errorPage指定的页面统称isErrorPage属性为true，且内置的exception对象为未捕捉的异常
+            (10)contentType：客户端浏览器根据该属性判断文档类型。html格式为text/html 纯文本格式为text/plain jpg图像为image/jpeg gif图像为image/gif word文档为application/msword
+            (11)info:指明jsp的信息，该信息可以通过Servlet。getServletInfo（）方法获取到
+            (12)trimDirectiveWhitespaces：是否去掉指令前后的空白字符串，默认为false
+        02.include指令：（静态导入）只有一种形式：<%@ include file = "relativeURL" %> relativeURL为本应用程序内另一个jsp文件或者html文件路径。一般用于jsp页面的区块化（多个页面使用相同的标题或者格式等）。此命令也可以通过jsp配置实现。引入文件通过编译后的内容存在在一个java类中。故可以直接使用引入文件内的变量。
+        03.taglib指令：jsp支持标签技术，使用标签功能能够实现视图代码重用，很少量的代码就能够实现很复杂的显示效果。而要使用标签功能必须先声明标签库和标签前缀。taglib指令用来指明jsp页面内使用的jsp标签库，常用有以下连个属性
+            (01)uri：指明类库的地址
+            (02)prefix：指明标签的前缀
+    4.jsp行为：是一组jsp内置的标签，只需要很少的标记代码就能够使用jsp提供的丰富功能。通常是对jsp功能的抽象和封装。包括两种：标准jsp行为（标签）和自定义jsp行为（标签）。标准格式为：<jsp:elements {attribute="value"}*/>.一个jsp行为能够指定0个或者多个属性对。
+        01.<jsp:include />行为：（动态导入）include行为用于运行时包含某个文件，如果被包含的的文件是jsp程序，则先执行jsp程序，然后再把执行的结果包含进来，include行为的语法：<jsp:include page="relativeURL" flush="true"/>，属性page是必须的，为被包含的文件相对路径，必须为本web应用程序的文件。可以在标签中传入参数。使用规定格式传参。
+        02.使用JavaBean（POJO）：useBean行为格式（定义Java Bean）：<jsp:useBean id="beanId" class="className" scope="Value" /> （类似于：Value。setAttribute("beanId",new User())） 设置useBean对象的属性值：<jsp:getProperty name="beanId" property="name"/>
+            (01)id属性：指明Java Bean对象的名称,jsp中可以使用该名称引用该Java Bean对象
+            (02)class属性：Java Bean类的全名
+            (03)scope属性：该Java Bean对象的范围，page时，只在该jsp内有效。request时，只在当前request中有效。session时，对当前用户有效。application时，当前web应用有效。默认为page。
+            (04)name属性：所声明的Java Bean对象名 
+            (05)property属性：Java Bean对象的属性名
+        03.scope实现各层次计数器
+        04.<jsp:plugin/>嵌入Applet
+        05.<jsp:forward/>行为：Servlet中forword方法的一个封装，实现跳转不同的jsp
+        06.<jsp:directive/>行为
+    5.jsp隐藏对象：输出数据时使用的对象。内置的9个隐藏对象：out、request、response、config、session、application、page、pageContext、exception。
+        01.out输出流对象
+        02.request请求对象
+        03.response响应对象
+        04.config配置对象
+        05.session会话对象
+        06.application应用程序对象
+        07.page页面对象
+        08.pageContext页面上下文对象
+        09.exception异常对象
+    6.jsp配置
+        01.jsp配置:类似于Servlet，只是servlet的servlet-class变成了jsp-file，值指向jsp的路径，访问时可以使用配置的名称，也可以使用本身的文件名。servlet-mapping中可以配置多个url-pattern属性
+        02.<jsp-config>标签：web。xml中的<jsp-config>标签支持对jsp的批量配置，其中包含两个子标签<taglib>和<jsp-property-group>。<taglib>用于定义taglib属性，<jsp-property-group>用于批量定义jsp属性。
+    7.EL表达式：格式：使用${}括起来的脚本，写在html代码中，不可以写在jsp元素(<% %>)中
+            (01)EL表达式：提供了获取对象以及属性的简单方式。
+            (02)隐藏对象：EL表达式不仅可以读取request、session中的属性，还可以读取其它隐藏对象的属性。
+            (03)EL表达式运算：加、减、乘、除、取余、三目运算、比较运算等
+过滤器Filter
+    1.Filter概述
+        01.Filter概述：Filter意为过滤器，用于在servlet之外对request和response进行修改和在servlet返回数据给浏览器端的request和response处理。Filter提出FilterChain(滤镜链，包含多个过滤器)。
+        02.Filter接口：一个Filter必须实现javax.servlet。Filter接口，Filter接口有三个方法：init、doFilter、destroy。其中init和destroy方法只会在web程序加载和卸载的时候调用，而doFilter在每次客户端请求时都会调用。如果不调用request就不会被交给后面的Filter或者Servlet。
+        03.Filter配置：在web。xml文件中配置，类似于Servlet的配置，主要配置<filter> 和  <filter-mapping>两个标签
+            (01)<filter>标签：配置Filter的名称。<filter-name> 和  <filter-class>，也可以配置<init-param>标签
+            (02)<filter-mapping>标签：配置Filter的筛选条件名称和筛选条件。对应Filter名称：<filter-name> 配置url规则：<url-pattern> 配置到达Servlet的方式：<dispatcher>--常用值：REQUEST(仅当直接请求Servlet时才生效)、FORWOARD(仅当某Servlet通过FORWOARD到达该Servlet时残生肖)、INCLUDE(jsp中通过<jsp:include/>请求时残有效)、ERROR(jsp中通过<%@ page errorPage="error.jsp"%>指定错误处理页面才有效)
+    2.Filter经典案例：权限验证、日志记录、数据压缩、数据加密、格式转换、图像处理等
+        01.防盗链：其他网站引用本网站图片资源时，会显示错误图片，只有本网站内网页引用时，图片才会正常显示。	
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
