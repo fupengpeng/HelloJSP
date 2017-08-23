@@ -9,11 +9,11 @@
             (1)模板数据：jsp中的html代码，它的内容是固定的，不会控制流程，不会影响程序运行结果。
             (2)元素：jsp中的java代码，决定着程序的流程。包括脚本（Scriptlet，java代码）、jsp指令、jsp标签。
         02.jsp脚本：必须使用 <% 和  %> 括起来，中间的代码必须遵循java语法。可以出现在jsp的任何地方。
-            example：<%  int a = 10; int b = 20;  int c = a + b;  %>
+            example：<%  int a = 10; int b = 20;  int c = a + b;  %> 也可以使用如下方法表述 <jsp:scriptlet>   代码片段     </jsp:scriptlet>
         03.jsp输出：必须使用 <%= 和 %> 括起来，可以输出各种类型（int double boolean String Object）数据，类似于servlet的输出。
-            example：<body>  int型数字a=<%= 15 %> </body>
+            example：<body>  int型数字a=<%= 15 %> </body> 也可以使用如下标签表述： <jsp:expression>   表达式  </jsp:expression>
         04.jsp注释：<%-- 注释内容，可以添加多行 --%>
-        05.jsp全局变量（方法与成员变量）：必须使用 <%! 和 %> 括起来，可以声明多个方法和成员变量，也可以分开声明。
+        05.jsp全局变量（方法与成员变量）：必须使用 <%! 和 %> 括起来，可以声明多个方法和成员变量，也可以分开声明。也可以使用如下标签表述：<jsp:declaration> 代码片段  </jsp:declaration>
         06.jsp中的if语句：使用元素（脚本）表示，可添加模板数据，但必须符合各自的使用规则及相关语法。
         07.jsp中的for循环：同if语句
         08.jsp中的while循环：同if语句
@@ -33,32 +33,47 @@
             (10)contentType：客户端浏览器根据该属性判断文档类型。html格式为text/html 纯文本格式为text/plain jpg图像为image/jpeg gif图像为image/gif word文档为application/msword
             (11)info:指明jsp的信息，该信息可以通过Servlet。getServletInfo（）方法获取到
             (12)trimDirectiveWhitespaces：是否去掉指令前后的空白字符串，默认为false
-        02.include指令：（静态导入）只有一种形式：<%@ include file = "relativeURL" %> relativeURL为本应用程序内另一个jsp文件或者html文件路径。一般用于jsp页面的区块化（多个页面使用相同的标题或者格式等）。此命令也可以通过jsp配置实现。引入文件通过编译后的内容存在在一个java类中。故可以直接使用引入文件内的变量。
-        03.taglib指令：jsp支持标签技术，使用标签功能能够实现视图代码重用，很少量的代码就能够实现很复杂的显示效果。而要使用标签功能必须先声明标签库和标签前缀。taglib指令用来指明jsp页面内使用的jsp标签库，常用有以下连个属性
+        02.include指令：（静态导入）只有一种形式：<%@ include file = "relativeURL" %> relativeURL为本应用程序内另一个jsp文件或者html文件路径。一般用于jsp页面的区块化（多个页面使用相同的标题或者格式等）。此命令也可以通过jsp配置实现。引入文件通过编译后的内容存在在一个java类中。故可以直接使用引入文件内的变量。也可以用如下xml语句表示：<jsp:directive.include file="文件相对 url 地址" />
+        03.taglib指令：jsp支持标签技术，使用标签功能能够实现视图代码重用，很少量的代码就能够实现很复杂的显示效果。而要使用标签功能必须先声明标签库和标签前缀。taglib指令用来指明jsp页面内使用的jsp标签库，常用有以下连个属性.也可以用如下xml语法表示：<jsp:directive.taglib uri="uri" prefix="prefixOfTag" />
             (01)uri：指明类库的地址
             (02)prefix：指明标签的前缀
     4.jsp行为：是一组jsp内置的标签，只需要很少的标记代码就能够使用jsp提供的丰富功能。通常是对jsp功能的抽象和封装。包括两种：标准jsp行为（标签）和自定义jsp行为（标签）。标准格式为：<jsp:elements {attribute="value"}*/>.一个jsp行为能够指定0个或者多个属性对。
         01.<jsp:include />行为：（动态导入）include行为用于运行时包含某个文件，如果被包含的的文件是jsp程序，则先执行jsp程序，然后再把执行的结果包含进来，include行为的语法：<jsp:include page="relativeURL" flush="true"/>，属性page是必须的，为被包含的文件相对路径，必须为本web应用程序的文件。可以在标签中传入参数。使用规定格式传参。
-        02.使用JavaBean（POJO）：useBean行为格式（定义Java Bean）：<jsp:useBean id="beanId" class="className" scope="Value" /> （类似于：Value。setAttribute("beanId",new User())） 设置useBean对象的属性值：<jsp:getProperty name="beanId" property="name"/>
+        02.<jsp:useBean id="beanId" class="className" scope="Value" />:创建一个javabean实例（类似于：Value。setAttribute("beanId",new User())） 设置useBean对象的属性值：<jsp:getProperty name="beanId" property="name"/>,使用JavaBean（POJO）：useBean行为格式（定义Java Bean）：
             (01)id属性：指明Java Bean对象的名称,jsp中可以使用该名称引用该Java Bean对象
             (02)class属性：Java Bean类的全名
             (03)scope属性：该Java Bean对象的范围，page时，只在该jsp内有效。request时，只在当前request中有效。session时，对当前用户有效。application时，当前web应用有效。默认为page。
             (04)name属性：所声明的Java Bean对象名 
             (05)property属性：Java Bean对象的属性名
-        03.scope实现各层次计数器
-        04.<jsp:plugin/>嵌入Applet
-        05.<jsp:forward/>行为：Servlet中forword方法的一个封装，实现跳转不同的jsp
+        03.<jsp:setProperty/>:给一个javabean实例设置初始值
+        04.<jsp:getProperty/>:取得一个javabean实例的成员变量
+        05.<jsp:forward/>转发行为：Servlet中forword方法的一个封装，实现跳转不同的jsp
         06.<jsp:directive/>行为
+        07.scope实现各层次计数器
+        08.<jsp:param/>:给一个jsp设置参数，常与<jsp:include />结合使用
+        09.<jsp:plugin/>嵌入Applet，使用插件
     5.jsp隐藏对象：输出数据时使用的对象。内置的9个隐藏对象：out、request、response、config、session、application、page、pageContext、exception。
-        01.out输出流对象
-        02.request请求对象
-        03.response响应对象
+        01.out输出流对象：向客户端输出数据，字节流，out.println("");
+        02.request请求对象：接收客户端的http请求
+            getParameter(String name);//使用 request.getParameter() 方法来获取表单参数的值，name表示表单的参数名
+            getParameterValue(String name);//获得如checkbox类（名字相同，但值有多个）的数据。 接收数组变量 ，如checkbox类型，获取参数名为name的参数值
+            setAttribute(String name,Object obj);//设置名字为name的obj，值为obj
+            getAttribute(String name);//获取名字为name的属性值，不存在返回null
+            getParameterNames():该方法可以取得所有变量的名称，该方法返回一个Emumeration。
+            getInputStream():调用此方法来读取来自客户端的二进制数据流
+            getCookie();//
+        03.response响应对象:接收jsp产生的回应
+            addCookie(Cookie cookie);//
+            sendRedirect(/welcome.jsp);//
         04.config配置对象
-        05.session会话对象
-        06.application应用程序对象
-        07.page页面对象
-        08.pageContext页面上下文对象
-        09.exception异常对象
+        05.session会话对象：用于保存用户的信息，跟踪用户的行为
+            setAttribute(String name,Object obj);
+            getAttribute(String name);
+        06.application应用程序对象：多个用户共享对象，可以做计数器
+        07.page页面对象：代表jsp这个实例本身
+        08.pageContext页面上下文对象：
+        09.exception异常对象：代表运行时的一个异常
+            getMessage();
     6.jsp配置
         01.jsp配置:类似于Servlet，只是servlet的servlet-class变成了jsp-file，值指向jsp的路径，访问时可以使用配置的名称，也可以使用本身的文件名。servlet-mapping中可以配置多个url-pattern属性
         02.<jsp-config>标签：web。xml中的<jsp-config>标签支持对jsp的批量配置，其中包含两个子标签<taglib>和<jsp-property-group>。<taglib>用于定义taglib属性，<jsp-property-group>用于批量定义jsp属性。
@@ -66,6 +81,177 @@
             (01)EL表达式：提供了获取对象以及属性的简单方式。
             (02)隐藏对象：EL表达式不仅可以读取request、session中的属性，还可以读取其它隐藏对象的属性。
             (03)EL表达式运算：加、减、乘、除、取余、三目运算、比较运算等
+    8.JSTL标签库
+        01.JSP 标准标签库(JSTL)
+            (01)概述：一个JSP标签集合，它封装了JSP应用的通用核心功能。JSTL支持通用的、结构化的任务，按功能分为5个类别：核心标签、格式化标签、SQL标签、XML标签、JSTL标签。
+            (02)JSTL库安装：http://archive.apache.org/dist/jakarta/taglibs/standard/binaries/  中下载jakarta-taglibs-standard-1.1.2.zip包并解压，将jakarta-taglibs-standard-1.1.2/lib/下的两个jar文件：standard.jar和jstl.jar文件拷贝到/WEB-INF/lib/下。配置如web。xml文件的内容。
+            (03)核心标签：核心标签是最常用的JSTL标签。引用核心标签库的语法如下：<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+                <c:out>	用于在JSP中显示数据，就像<%= ... >
+                <c:set>	用于保存数据
+                <c:remove>	用于删除数据
+                <c:catch>	用来处理产生错误的异常状况，并且将错误信息储存起来
+                <c:if>	与我们在一般程序中用的if一样
+                <c:choose>	本身只当做<c:when>和<c:otherwise>的父标签
+                <c:when>	<c:choose>的子标签，用来判断条件是否成立
+                <c:otherwise>	<c:choose>的子标签，接在<c:when>标签后，当<c:when>标签判断为false时被执行
+                <c:import>	检索一个绝对或相对 URL，然后将其内容暴露给页面
+                <c:forEach>	基础迭代标签，接受多种集合类型
+                <c:forTokens>	根据指定的分隔符来分隔内容并迭代输出
+                <c:param>	用来给包含或重定向的页面传递参数
+                <c:redirect>	重定向至一个新的URL.
+                <c:url>	使用可选的查询参数来创造一个URL
+            (04)格式化标签：JSTL格式化标签用来格式化并输出文本、日期、时间、数字。引用格式化标签库的语法如下：<%@ taglib prefix="fmt"  uri="http://java.sun.com/jsp/jstl/fmt" %>
+                <fmt:formatNumber>	使用指定的格式或精度格式化数字
+                <fmt:parseNumber>	解析一个代表着数字，货币或百分比的字符串
+                <fmt:formatDate>	使用指定的风格或模式格式化日期和时间
+                <fmt:parseDate>	解析一个代表着日期或时间的字符串
+                <fmt:bundle>	绑定资源
+                <fmt:setLocale>	指定地区
+                <fmt:setBundle>	绑定资源
+                <fmt:timeZone>	指定时区
+                <fmt:setTimeZone>	指定时区
+                <fmt:message>	显示资源配置文件信息
+                <fmt:requestEncoding>	设置request的字符编码
+            (05)SQL标签：JSTL SQL标签库提供了与关系型数据库（Oracle，MySQL，SQL Server等等）进行交互的标签。引用SQL标签库的语法如下：<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+                <sql:setDataSource>	指定数据源
+                <sql:query>	运行SQL查询语句
+                <sql:update>	运行SQL更新语句
+                <sql:param>	将SQL语句中的参数设为指定值
+                <sql:dateParam>	将SQL语句中的日期参数设为指定的java.util.Date 对象值
+                <sql:transaction>	在共享数据库连接中提供嵌套的数据库行为元素，将所有语句以一个事务的形式来运行
+            (06)XML标签：JSTL XML标签库提供了创建和操作XML文档的标签。引用XML标签库的语法如下：<%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
+                                                        在使用xml标签前，你必须将XML 和 XPath 的相关包拷贝至你的<Tomcat 安装目录>\lib下:
+                    XercesImpl.jar
+                                                        下载地址： http://www.apache.org/dist/xerces/j/
+                    xalan.jar
+                                                        下载地址： http://xml.apache.org/xalan-j/index.html
+                <x:out>	与<%= ... >,类似，不过只用于XPath表达式
+                <x:parse>	解析 XML 数据
+                <x:set>	设置XPath表达式
+                <x:if>	判断XPath表达式，若为真，则执行本体中的内容，否则跳过本体
+                <x:forEach>	迭代XML文档中的节点
+                <x:choose>	<x:when>和<x:otherwise>的父标签
+                <x:when>	<x:choose>的子标签，用来进行条件判断
+                <x:otherwise>	<x:choose>的子标签，当<x:when>判断为false时被执行
+                <x:transform>	将XSL转换应用在XML文档中
+                <x:param>	与<x:transform>共同使用，用于设置XSL样式表
+            (07)JSTL函数(标签)：JSTL包含一系列标准函数，大部分是通用的字符串处理函数。引用JSTL函数库的语法如下：<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+                fn:contains()	测试输入的字符串是否包含指定的子串
+                fn:containsIgnoreCase()	测试输入的字符串是否包含指定的子串，大小写不敏感
+                fn:endsWith()	测试输入的字符串是否以指定的后缀结尾
+                fn:escapeXml()	跳过可以作为XML标记的字符
+                fn:indexOf()	返回指定字符串在输入字符串中出现的位置
+                fn:join()	将数组中的元素合成一个字符串然后输出
+                fn:length()	返回字符串长度
+                fn:replace()	将输入字符串中指定的位置替换为指定的字符串然后返回
+                fn:split()	将字符串用指定的分隔符分隔然后组成一个子字符串数组并返回
+                fn:startsWith()	测试输入字符串是否以指定的前缀开始
+                fn:substring()	返回字符串的子集
+                fn:substringAfter()	返回字符串在指定子串之后的子集
+                fn:substringBefore()	返回字符串在指定子串之前的子集
+                fn:toLowerCase()	将字符串中的字符转为小写
+                fn:toUpperCase()	将字符串中的字符转为大写
+                fn:trim()	移除首位的空白符
+        02.JSP 连接数据库：mysql-connector-java-5.1.39-bin.jar包下载后把 mysql-connector-java-5.1.39-bin.jar 拷贝到 tomcat 下 lib 目录。
+            (01)创建测试数据库：接下来我们在 MySQL 中创建 RUNOOB 数据库，并创建 websites 数据表，表结构如下：
+                CREATE TABLE `websites` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `name` char(20) NOT NULL DEFAULT '' COMMENT '站点名称',
+                  `url` varchar(255) NOT NULL DEFAULT '',
+                  `alexa` int(11) NOT NULL DEFAULT '0' COMMENT 'Alexa 排名',
+                  `country` char(10) NOT NULL DEFAULT '' COMMENT '国家',
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+                INSERT INTO `websites` VALUES ('1', 'Google', 'https://www.google.cm/', '1', 'USA'), 
+                    ('2', '淘宝', 'https://www.taobao.com/', '13', 'CN'), 
+                    ('3', '菜鸟教程', 'http://www.runoob.com', '5892', ''), 
+                    ('4', '微博', 'http://weibo.com/', '20', 'CN'), 
+                    ('5', 'Facebook', 'https://www.facebook.com/', '3', 'USA');
+            (02)具体操作详见项目jsp文件
+        03.JSP xml数据处理
+            (01)在使用JSP处理XML之前，您需要将与XML 和XPath相关的两个库文件放在<Tomcat Installation Directory>\lib目录下：
+                XercesImpl.jar：在这下载http://www.apache.org/dist/xerces/j/
+                xalan.jar：在这下载http://xml.apache.org/xalan-j/index.html
+            (02)详细用法见项目内
+        04.JSP JavaBean
+            (01)JSP JavaBean：JavaBean是特殊的Java类，使用J ava语言书写，并且遵守JavaBean API规范。
+                a.接下来给出的是JavaBean与其它Java类相比而言独一无二的特征：
+                b.提供一个默认的无参构造函数。
+                c.需要被序列化并且实现了Serializable接口。
+                d.可能有一系列可读写属性。
+                e.可能有一系列的"getter"或"setter"方法。
+            (02)JavaBean属性：一个JavaBean对象的属性应该是可访问的。这个属性可以是任意合法的Java数据类型，包括自定义Java类。一个JavaBean对象的属性可以是可读写，或只读，或只写。JavaBean对象的属性通过JavaBean实现类中提供的两个方法来访问：
+                getPropertyName()	举例来说，如果属性的名称为myName，那么这个方法的名字就要写成getMyName()来读取这个属性。这个方法也称为访问器。
+                setPropertyName()	举例来说，如果属性的名称为myName，那么这个方法的名字就要写成setMyName()来写入这个属性。这个方法也称为写入器。
+            (03)具体实现详见代码实例
+        05.JSP 自定义标签
+            (01)自定义标签：自定义标签是用户定义的JSP语言元素。当JSP页面包含一个自定义标签时将被转化为servlet，标签转化为对被 称为tag handler的对象的操作，即当servlet执行时Web container调用那些操作。
+                JSP标签扩展可以让你创建新的标签并且可以直接插入到一个JSP页面。 JSP 2.0规范中引入Simple Tag Handlers来编写这些自定义标记。可以继承SimpleTagSupport类并重写的doTag()方法来开发一个最简单的自定义标签
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+        06.JSP 表达式语言
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+        
+        07.JSP 异常处理
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+        08.JSP 国际化
+            (01)
+            (02)
+            (03)
+            (04)
+            (05)
+            (06)
+            (07)
+            (08)
+            (09)
+            (10)
+            (11)
+            (12)
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 过滤器Filter
     1.Filter概述
         01.Filter概述：Filter意为过滤器，用于在servlet之外对request和response进行修改和在servlet返回数据给浏览器端的request和response处理。Filter提出FilterChain(滤镜链，包含多个过滤器)。
@@ -74,7 +260,33 @@
             (01)<filter>标签：配置Filter的名称。<filter-name> 和  <filter-class>，也可以配置<init-param>标签
             (02)<filter-mapping>标签：配置Filter的筛选条件名称和筛选条件。对应Filter名称：<filter-name> 配置url规则：<url-pattern> 配置到达Servlet的方式：<dispatcher>--常用值：REQUEST(仅当直接请求Servlet时才生效)、FORWOARD(仅当某Servlet通过FORWOARD到达该Servlet时残生肖)、INCLUDE(jsp中通过<jsp:include/>请求时残有效)、ERROR(jsp中通过<%@ page errorPage="error.jsp"%>指定错误处理页面才有效)
     2.Filter经典案例：权限验证、日志记录、数据压缩、数据加密、格式转换、图像处理等
-        01.防盗链：其他网站引用本网站图片资源时，会显示错误图片，只有本网站内网页引用时，图片才会正常显示。	
+        01.防盗链：其他网站引用本网站图片资源时，会显示错误图片，只有本网站内网页引用时，图片才会正常显示。
+    3.常见的过滤器：
+        01.身份验证过滤器（Authentication Filters）。
+        02.数据压缩过滤器（Data compression Filters）。
+        03.加密过滤器（Encryption Filters）。
+        04.触发资源访问事件过滤器。
+        05.图像转换过滤器（Image Conversion Filters）。
+        06.日志记录和审核过滤器（Logging and Auditing Filters）。
+        07.MIME-TYPE 链过滤器（MIME-TYPE Chain Filters）。
+        08.标记化过滤器（Tokenizing Filters）。
+        09.XSL/T 过滤器（XSL/T Filters），转换 XML 内容。
+    4.web.xml配置各节点说明
+        01.<filter>指定一个过滤器。
+            <filter-name>用于为过滤器指定一个名字，该元素的内容不能为空。
+            <filter-class>元素用于指定过滤器的完整的限定类名。
+            <init-param>元素用于为过滤器指定初始化参数，它的子元素<param-name>指定参数的名字，<param-value>指定参数的值。
+                                           在过滤器中，可以使用FilterConfig接口对象来访问初始化参数。
+        02.<filter-mapping>元素用于设置一个 Filter 所负责拦截的资源。一个Filter拦截的资源可通过两种方式来指定：Servlet 名称和资源访问的请求路径
+            <filter-name>子元素用于设置filter的注册名称。该值必须是在<filter>元素中声明过的过滤器的名字
+            <url-pattern>设置 filter 所拦截的请求路径(过滤器关联的URL样式)
+        03.<servlet-name>指定过滤器所拦截的Servlet名称。
+        04.<dispatcher>指定过滤器所拦截的资源被 Servlet 容器调用的方式，可以是REQUEST,INCLUDE,FORWARD和ERROR之一，默认REQUEST。用户可以设置多个<dispatcher>子元素用来指定 Filter 对资源的多种调用方式进行拦截。
+        05.<dispatcher>子元素可以设置的值及其意义
+            REQUEST：当用户直接访问页面时，Web容器将会调用过滤器。如果目标资源是通过RequestDispatcher的include()或forward()方法访问时，那么该过滤器就不会被调用。
+            INCLUDE：如果目标资源是通过RequestDispatcher的include()方法访问时，那么该过滤器将被调用。除此之外，该过滤器不会被调用。
+            FORWARD：如果目标资源是通过RequestDispatcher的forward()方法访问时，那么该过滤器将被调用，除此之外，该过滤器不会被调用。
+            ERROR：如果目标资源是通过声明式异常处理机制调用时，那么该过滤器将被调用。除此之外，过滤器不会被调用。
             (06)
             (07)
             (08)

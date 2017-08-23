@@ -1,5 +1,7 @@
 package com.jiudianlianxian.entity;
 
+import java.io.Serializable;
+
 
 /**
  * 
@@ -11,7 +13,7 @@ package com.jiudianlianxian.entity;
  * @date 2017年8月11日 上午10:36:42
  *
  */
-public class User {
+public class User implements Serializable {
 
 	private String username;
 	private String password;
